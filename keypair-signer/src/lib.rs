@@ -56,7 +56,13 @@ impl Generator for Keypair {
 
     fn try_restore_from_path(path: &str) -> Result<Keypair, String> {
         let data = std::fs::read(path).map_err(|e| e.to_string())?;
-        serde_json::from_slice(&data).map_err(|_| "Failed to deserialize keypair".to_string())
+        let keypair: Keypair = serde_json::from_slice(&data)
+            .map_err(|_| "Failed to deserialize keypair".to_string())?;
+        let public_key = Sha256::digest(keypair.private_key).into();
+        Ok(Keypair {
+            private_key: keypair.private_key,
+            public_key,
+        })
     }
 
     fn save_to_path(&self, path: &str) -> Result<(), String> {
