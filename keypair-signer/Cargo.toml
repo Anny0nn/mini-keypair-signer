@@ -1,0 +1,12 @@
+[package]
+name = "mini-keypair-signer"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[dependencies]
+sha2 = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
