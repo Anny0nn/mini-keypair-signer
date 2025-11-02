@@ -19,8 +19,11 @@ pub struct Keypair {
     pub public_key: [u8; 32],
 }
 
+/// Signer trait responsible for signing and verifying messages.
 pub trait Signer {
+    /// Sign a message using the private key.
     fn sign(&self, msg: &[u8]) -> Vec<u8>;
+    /// Verify if the signature matches the message and the keypair.
     fn verify(&self, msg: &[u8], sig: &[u8]) -> bool;
 }
 
@@ -36,9 +39,13 @@ impl Signer for Keypair {
     }
 }
 
+/// Generator trait responsible for generating and saving keypairs.
 pub trait Generator {
+    /// Generate a new random keypair.
     fn generate() -> Keypair;
+    /// Try to restore a json keypair from a path.
     fn try_restore_from_path(path: &str) -> Result<Keypair, String>;
+    /// Save the keypair as json to a path.
     fn save_to_path(&self, path: &str) -> Result<(), String>;
 }
 
@@ -58,6 +65,10 @@ impl Generator for Keypair {
         let data = std::fs::read(path).map_err(|e| e.to_string())?;
         let keypair: Keypair = serde_json::from_slice(&data)
             .map_err(|_| "Failed to deserialize keypair".to_string())?;
+        // Saving the public key to the json file is unnecessary as
+        // it is derived from the private key, so I'm just ignoring it and deriving it again.
+        // Ideally, writing a custom impl of `Serialize` and `Deserialize` for the `Keypair` struct
+        // would be the best approach to never save the public key to the json file.
         let public_key = Sha256::digest(keypair.private_key).into();
         Ok(Keypair {
             private_key: keypair.private_key,
