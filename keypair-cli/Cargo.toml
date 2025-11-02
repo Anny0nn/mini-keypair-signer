@@ -1,0 +1,11 @@
+[package]
+name = "mini-keypair-cli"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap = { workspace = true }
+hex = { workspace = true }
+mini-keypair-signer = { workspace = true }
